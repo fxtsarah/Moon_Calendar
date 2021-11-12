@@ -1,0 +1,97 @@
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: #111111;
+            color: white;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+        
+        h1 {
+            font-size: 48px;
+        }
+        
+        p, a {
+            font-size: 24px;
+        }
+        
+        a {
+            color: red;
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 100px auto;
+        }
+        
+        .day{
+            width: 13%;
+            height: 100px;
+            top: 0px;
+            display: inline-flex;
+            border: 2px solid white;
+            vertical-align: top;
+        }
+
+        .selectedday{
+            width: 13%;
+            height: 100px;
+            top: 0px;
+            display: inline-flex;
+            border: 2px solid red;
+            vertical-align: top;
+        }
+
+        img{
+            height: 30%;
+        }
+
+        .weekday{
+            width: 13%;
+            height: 60px;
+            text-align: center;
+            display: inline-flex;
+            border: 2px solid white;
+            flex-grow: 1
+        }
+        .weekdaytxt{
+            margin: 0 auto;
+            display: inline-block;
+
+
+        }
+
+        .menuitem{
+            font-size: 24px; 
+            display: inline;
+            text-decoration: none;
+            padding: 10px;
+        }
+
+        .menuitem a:hover{
+            color:indianred
+        } 
+
+        .menuitem a{
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+    </style> 
+</head>
+
+<body>
+    <div >
+        <div class=menuitem><a href="{{ url_for('start3', year = year, month = (month - 1))}}">previous</a></div>
+        <div class=menuitem><a href="{{ url_for('start3', year = year, month = month)}}">{{ monthname }} {{ year }}</a></div>
+        <div class=menuitem><a href="{{ url_for('start3', year = year, month = (month + 1))}}">next</a></div>
+    </div>
+    <div class="container">
+        {% block container %}
+        {% endblock %}
+    </div>
+</body>
+
+</html>

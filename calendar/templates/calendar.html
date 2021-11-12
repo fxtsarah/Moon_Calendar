@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+
+{% block container %}
+
+{% for day in week %}
+    <div class="weekday"><div class="weekdaytxt">{{ day }}</div></div>
+{% endfor %}
+
+{% for placeholder in placeholders %}
+    <a class="day"></a>
+{% endfor %}
+
+{% for date, phase in dates %}
+{% if (date.day == selected_day) %}
+    <a class="selectedday" href="{{ url_for('start3', year = year, month = month)}}">{{ date.strftime('%d') }} {{ phase }}<img src=" {{url_for('static', filename='moon.png')}} "></a>
+{% else %}
+    <a class="day" href="{{ url_for('start3', year = year, month = month, day = date.day)}}">{{ date.strftime('%d') }} {{ phase }}<img src=" {{url_for('static', filename='moon.png')}} "></a>
+{% endif %}
+{% endfor %}
+
+{% endblock %}
+
