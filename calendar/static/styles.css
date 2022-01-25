@@ -1,0 +1,206 @@
+/* start main css */
+
+body {
+    background-color: #2b2049;
+    color: white;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+        
+h1 {
+    color: rgb(248, 255, 146);
+    font-weight: bold;
+    display: inline-flex;
+    font-size: 36px;
+    }
+        
+a {
+    color: rgb(248, 255, 146);
+    }
+        
+.container {
+    width: 950px;
+    margin: 100px auto;
+    margin-top: 30px;
+    }
+/* end main css */
+
+/* start menu css */
+.menu {
+    width: 950px;
+    margin: 100px auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    }
+
+.menuitem{
+    font-size: 24px; 
+    display: inline;
+    text-decoration: none;
+    padding: 10px;
+    }
+
+.menuitem a:hover{
+    color:rgb(173, 216, 230)
+    } 
+
+.menuitem a{
+    font-size: 24px;
+    text-decoration: none;
+    }
+
+.preference-options {
+    color: rgb(247, 248, 203);
+    background-color: #241b3d;
+}
+/* end menu css */
+
+/* start form css */
+
+form {
+    width: 950px;
+    margin: 100px auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    }
+
+select {
+    font-size: 16px;
+    }
+
+input {
+    font-size: 16px;
+    width: 70px;
+
+    background-color: #241b3d;
+    border-color: #241b3d;
+    color: rgb(247, 248, 203);
+    padding: 5px;
+    }
+
+input:focus {
+    background-color: #120c24;
+}
+
+select {
+    font-size: 16px;
+    width: 130px;
+    background-color: #241b3d;
+    border-color: #241b3d;
+    color: rgb(247, 248, 203);
+    padding: 5px;
+    }
+
+.submit-button {
+    width: 100px;
+    background-color: #241b3d;
+    border-color: #241b3d;
+    color: rgb(247, 248, 203);
+    padding: 5px;
+    }
+
+/* end form css */
+
+/* start day_info css */
+
+.day_info {
+    width: 950px;
+    margin: 100px auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-left: 50px;
+    }
+
+.day_info_date {
+    font-weight: bold;
+}
+
+.day_info_title {
+    font-weight: bold;
+}
+
+/* end day_info css */
+
+/* start calendar css */
+
+.day{
+    width: 125px;
+    height: 110px;
+    top: 0px; 
+    display: inline-flex;
+    border: 2px solid white;
+    vertical-align: top;
+    color: white;
+    text-decoration: none;
+    }
+
+.selectedday {
+    width: 125px;
+    height: 110px;
+    top: 0px;
+    display: inline-flex;
+    border: 2px solid rgb(255, 253, 128);
+    vertical-align: top;
+    color: rgb(253, 255, 155);
+    font-size: 16px;
+    text-decoration: none;
+    }
+
+img{
+    height: 100px;
+    filter: opacity(0.3) drop-shadow(0 0 0 lightblue);
+    position: absolute;
+    display: block;
+    margin-left: 1%;
+    margin-top: .25%;
+    z-index: 1;
+    }
+
+.daytxt {
+    z-index: 4;
+    font-size: 24;
+    padding: 10px;
+    }
+
+.weekday {
+    width: 125px;
+    height: 60px;
+    text-align: center;
+    display: inline-flex;
+    border: 2px solid white;
+    flex-grow: 1
+    }
+
+.weekdaytxt {
+    margin: 0 auto;
+    display: inline-block;
+    font-size: 20px;
+    margin-top: 10px;
+    }
+
+/* end calendar css */
+
+/* start add event css */
+
+.static_choices {
+    margin-top: 10px;
+    display: none;
+}
+
+.varied_day_choices {
+    margin-top: 10px;
+    display: none;
+}
+
+.name_input {
+    width: 300px;
+}
+
+.submit_event {
+    margin-top: 10px;
+    width: 100px;
+    background-color: #241b3d;
+    border-color: #241b3d;
+    color: rgb(247, 248, 203);
+    padding: 5px;
+    display: none;
+}
