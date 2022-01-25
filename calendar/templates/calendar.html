@@ -1,20 +1,89 @@
 {% extends "main.html" %}
 
+{% block nav %}
+
+<div class = menu>
+    <div class=menuitem><a href="{{ url_for('start', year = prevyear, month = prevmonth, week_start_day = week_start_day)}}">previous</a></div>
+    <div class=menuitem><h1>{{ monthname }} {{ year }}</h1></div>
+    <div class=menuitem><a href="{{ url_for('start', year = nextyear, month = nextmonth, week_start_day = week_start_day)}}">next</a></div>
+    <div class=menuitem style = "float: right; margin-top: 30px;"><a href="{{ url_for('start_add')}}">Add New Event</a></div>
+    <div class=menuitem style = "float: right; margin-top: 30px;"><a href="{{ url_for('start_pref')}}">Preferences</a></div>
+</div>
+
+<!-- <div id = "preference-options" class = "preference-options">
+<p>choose your preferences</p>
+</div> -->
+
+<!-- <script>
+    function togglePreferenceOptions() {
+        var preference_options = document.getElementById("preference-options");
+        console.log("please hide");
+        preference_options.hide();
+    }
+</script> -->
+
+{% endblock %}
+
 {% block container %}
 
+
+<form> 
+    <select name="month"> 
+        <option value = 1>January</option>
+        <option value = 2>February</option>
+        <option value = 3>March</option>
+        <option value = 4>April</option>
+        <option value = 5>May</option>
+        <option value = 6>June</option>
+        <option value = 7>July</option>
+        <option value = 8>August</option>
+        <option value = 9>September</option>
+        <option value = 10>October</option>
+        <option value = 11>November</option>
+        <option value = 12>December</option>
+    </select>
+    <input type="text" name="day" placeholder="day">
+    <input type="text" name="year" placeholder="year">
+<input class= "submit-button" type="submit" value="Go To Date">
+</form>
+
+
+<div class="day_info">
+    <p class= "day_info_date"> {{ monthname }} {{ selected_day}}, {{ year }} </p>
+    <p> <b>Moon Phase: </b>
+    {{ selected_phase }} </p>
+   
+    <p>{% if event_list %}
+    <b>Events: </b>
+   
+    {% for event in event_list %}
+    {{ event["Name"] }} <br>
+    {% endfor %}</p>
+    
+    {% endif %}
+</div>
+
 {% for day in week %}
-    <div class="weekday"><div class="weekdaytxt">{{ day }}</div></div>
+    <div class="weekday">
+        <div class="weekdaytxt">{{ day }}</div>
+    </div>
 {% endfor %}
 
 {% for placeholder in placeholders %}
     <a class="day"></a>
 {% endfor %}
 
-{% for date, phase in dates %}
+{% for date, phase, pos in dates %}
 {% if (date.day == selected_day) %}
-    <a class="selectedday" href="{{ url_for('start3', year = year, month = month)}}">{{ date.strftime('%d') }} {{ phase }}<img src=" {{url_for('static', filename='moon.png')}} "></a>
+    <a class="selectedday" 
+    href="{{ url_for('start', year = year, month = month, week_start_day = week_start_day)}}">
+    <img src= "{{ pos | find_moon_image }}">
+    <span class="daytxt">{{ date.strftime('%d') }}</span></a>
 {% else %}
-    <a class="day" href="{{ url_for('start3', year = year, month = month, day = date.day)}}">{{ date.strftime('%d') }} {{ phase }}<img src=" {{url_for('static', filename='moon.png')}} "></a>
+    <a class="day" 
+    href="{{ url_for('start', year = year, month = month, day = date.day, week_start_day = week_start_day)}}">
+    <img src= "{{ pos | find_moon_image }}">
+    <span class="daytxt">{{ date.strftime('%d') }}</span></a>
 {% endif %}
 {% endfor %}
 
