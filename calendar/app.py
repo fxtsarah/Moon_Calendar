@@ -1,43 +1,168 @@
 from flask import Flask, render_template, redirect, url_for, request
 from datetime import datetime
 from moonphase import position, phase
-import calendar
-
-
-
+from math import ceil
+import calendar, math, decimal
+import sqlite3
+dec = decimal.Decimal
 
 app = Flask(__name__)
 
+# start sql query functions
+
+def query(query_text):
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute(query_text)
+
+    column_names = []
+    for column in cur.description:
+        column_names.append(column[0])
+
+    rows = cur.fetchall()
+    dicts = []
+
+    for row in rows:
+        d = dict(zip(column_names, row))
+        dicts.append(d)
+
+    conn.close()
+    return dicts
+
+def mod_query(query_text, *args):
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute(query_text, args)
+    conn.commit()
+    conn.close()
+
+def get_all_events():
+    return query("SELECT * FROM events")
+
+def get_static_day_events(mon, day):
+    return query("SELECT NAME FROM events where month = " + str(mon) + " and day = " + str(day))
+
+def get_varied_day_events(mon, day, year):
+    cur_numweekday = datetime(year, mon, day).weekday()
+    cur_weekday_of_mon = ceil(day / 7)
+    return query("SELECT NAME FROM events where month = " + str(mon) 
+    + " and weekday = " + str(cur_numweekday) 
+    + " and weekdayofmonth = " + str(cur_weekday_of_mon))
+
+def get_day_events(mon, day, year):
+    static_days = get_static_day_events(mon, day)
+    varied_days = get_varied_day_events(mon, day, year)
+    return static_days + varied_days
+
+def add_static_event(name, mon, day):
+    return mod_query("INSERT INTO events (name, month, day) VALUES (?,?,?)", name, mon, day)
+
+def add_varied_day_event(name, mon, weekday, weekdayofmonth):
+    return mod_query("INSERT INTO events (name, month, weekday, weekdayofmonth) VALUES (?,?,?,?)", name, mon, weekday, weekdayofmonth)
+
+# end sql query functions
+# start calendar calculation functions
+
+@app.template_filter('find_moon_image')
+def find_moon_image(pos):
+    index = (pos * dec(8)) + dec("0.5")
+    index = math.floor(index)
+    filename = {
+      0: "new moon.png", 
+      1: "Waxing Crescent.png", 
+      2: "first quarter.png", 
+      3: "Waxing Gibbous.png", 
+      4: "full moon.png", 
+      5: "Waning Gibbous.png", 
+      6: "third quarter.png", 
+      7: "Waning Crescent.png" } [int(index) & 7]
+    return url_for('static', filename = filename)
+
+now = datetime.now()
+
+# end calendar calculation functions
+# start render html funtions
+
 @app.route("/")
 def start():
-    return redirect(url_for("start3", year=2021, month=11))
-    # dates = []
-    # week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    # for i in range(1,32):
-    #     day = datetime(2021, 10, i, 0, 0)
-    #     dates.append((day, phase(position(day))))
-    # return render_template('calendar.html', dates = dates, week = week, placeholders = list(range(1,6)))
+    year = request.args.get('year', type = int) or now.year
+    month = request.args.get('month', type = int) or now.month
+    selected_day = request.args.get('day', type = int) or now.day
+    week_start_day = request.args.get('wk_start_day', type = int) or 1
 
-@app.route("/month/<int:year>/<int:month>")
-def start3(year, month):
-    if month == 13:
-        year += 1
-        month = 1
-    if month == 0:
-        year -= 1
-        month = 12
+    if month == 12:
+        nextmonth = 1
+        prevmonth = 11
+        nextyear = year + 1
+        prevyear = year
     
-    week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    elif month == 1:
+        nextmonth = 2
+        prevmonth = 12
+        nextyear = year
+        prevyear = year - 1
+        
+    else:
+        nextmonth = month + 1
+        prevmonth = month - 1
+        nextyear = year
+        prevyear = year
+    
+    week_sunstart = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    week_monstart = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     monthname = datetime(year, month, 1).strftime("%B")
     numweekday = datetime(year, month, 1).weekday()
-    selected_day = request.args.get('day', type= int)
-    print (selected_day)
-    placeholders = list(range(0, numweekday))
+
+    if week_start_day == 0:
+        placeholders = list(range(0, numweekday))
+        week = week_monstart
+    elif week_start_day == 1:
+        placeholders = list(range(0, numweekday + 1))
+        week = week_sunstart
+
+    selected_day_datetime = datetime(year, month, selected_day, 0, 0)
 
     dates = []
     lastofmonth = calendar.monthrange(year, month)[1]
-    
+
+    event_list = get_day_events(month, selected_day, year)
+
     for i in range(1, (lastofmonth + 1)):
         day = datetime(year, month, i, 0, 0)
-        dates.append((day, phase(position(day))))
-    return render_template('calendar.html', selected_day= selected_day, monthname = monthname, month = month, year = year, dates = dates, week = week, placeholders = placeholders)
+        dates.append((day, phase(position(day)), (position(day))))
+
+    return render_template('calendar.html', 
+    selected_day = selected_day, 
+    selected_phase = phase(position(selected_day_datetime)),
+    monthname = monthname, 
+    month = month,
+    year = year, 
+    dates = dates, 
+    week = week, 
+    placeholders = placeholders,
+    nextmonth = nextmonth,
+    prevmonth = prevmonth,
+    nextyear = nextyear,
+    prevyear = prevyear,
+    event_list = event_list)
+
+@app.route("/add", methods=["GET","POST"])
+def start_add():
+    year = request.args.get('year', type = int) or 2021
+    month = request.args.get('month', type = int) or 12
+    selected_day = request.args.get('day', type = int) or 1
+
+    if request.method == "POST":
+        d = request.form.to_dict()
+        if d["event_type"] == "static_day":
+            add_static_event(d["new_event_name"], d["new_event_month"], d["new_event_day"])
+        elif d["event_type"] == "varied_day":
+            add_varied_day_event(d["new_event_name"], d["new_event_month"], d["new_event_weekday"], d["new_event_weekdayofmonth"])
+
+    return render_template('add-event-page.html')
+
+@app.route("/pref")
+def start_pref():
+    return render_template('preferences.html')
+
+# end render html funtions
