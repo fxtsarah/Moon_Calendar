@@ -7,20 +7,31 @@
     <div class=menuitem><h1>{{ monthname }} {{ year }}</h1></div>
     <div class=menuitem><a href="{{ url_for('start', year = nextyear, month = nextmonth, wk_start_day = wk_start_day)}}">next</a></div>
     <div class=menuitem style = "float: right; margin-top: 30px;"><a href="{{ url_for('start_add')}}">Add New Event</a></div>
-    <div class=menuitem style = "float: right; margin-top: 30px;"><a href="{{ url_for('start_pref')}}">Preferences</a></div>
+    <div id = "pref-toggle" class=menuitem style = "float: right; margin-top: 30px;"><a>Preferences</a></div>
 </div>
 
-<!-- <div id = "preference-options" class = "preference-options">
-<p>choose your preferences</p>
-</div> -->
+<div id = "preference_options" class = "preference_options">
+    <form style = "display: block;"> 
+        <b style = "display: block;"><p>First Day of the Week:</p></b>
+        <div>
+            <input type="radio" id="sun_start_radio" name="wk_start_day" value=1>
+            <label for="sun_start_radio">Sunday</label> <br>
+              
+            <input type="radio" id="mon_start_radio" name="wk_start_day" value=0>
+            <label for="mon_start_radio">Monday</label>
+        </div>
+        <input class= "submit_wk_start" type="submit" value="Apply">
+    </form>
+</div>
 
-<!-- <script>
-    function togglePreferenceOptions() {
-        var preference_options = document.getElementById("preference-options");
-        console.log("please hide");
-        preference_options.hide();
-    }
-</script> -->
+<script>
+    $('#pref-toggle').click(
+        () => {
+        //var preference_options = document.getElementById("preference_options");
+        $(".preference_options").toggle(); 
+        }
+    )
+</script>
 
 {% endblock %}
 
@@ -46,20 +57,6 @@
     <input type="text" name="year" placeholder="year">
 <input class= "submit-button" type="submit" value="Go To Date">
 </form>
-
-
-<!-- <form style = "display: block;"> 
-    <b style = "display: block;"><p>First Day of the Week:</p></b>
-    <div>
-        <input type="radio" id="sun_start_radio" name="wk_start_day" value=1>
-        <label for="???">Sunday</label> <br>
-          
-        <input type="radio" id="mon_start_radio" name="wk_start_day" value=0>
-        <label for="???>Monday</label>
-    </div>
-    <input class= "submit_wk_start" type="submit" value="Apply">
-</form> -->
-
 
 
 <div class="day_info">
@@ -89,17 +86,25 @@
 
 {% for date, phase, pos in dates %}
 {% if (date.day == selected_day) %}
-    <a class="selectedday" 
+    <a class="selectedday"
     href="{{ url_for('start', year = year, month = month, wk_start_day = wk_start_day)}}">
     <img src= "{{ pos | find_moon_image }}">
     <span class="daytxt">{{ date.strftime('%d') }}</span></a>
 {% else %}
-    <a class="day" 
+    <a class="day"
     href="{{ url_for('start', year = year, month = month, day = date.day, wk_start_day = wk_start_day)}}">
     <img src= "{{ pos | find_moon_image }}">
     <span class="daytxt">{{ date.strftime('%d') }}</span></a>
 {% endif %}
 {% endfor %}
 
-{% endblock %}
+<script>
+    // is there a way to change the given say without having the enitre page reload?
+    $('#day').click(
+        () => {
+        day = date.day;
+        }
+    )
+</script>
 
+{% endblock %}
