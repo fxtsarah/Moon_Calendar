@@ -1,9 +1,14 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, url_for, request
 from datetime import datetime
 from moonphase import position, phase
 from math import ceil
 import calendar, math, decimal
 import sqlite3
+import numpy
+# how can I import skyfield so I can find solsitces and equinoxes?
+# import skyfield
+# from skyfield import api
+
 dec = decimal.Decimal
 
 app = Flask(__name__)
@@ -88,7 +93,7 @@ def start():
     year = request.args.get('year', type = int) or now.year
     month = request.args.get('month', type = int) or now.month
     selected_day = request.args.get('day', type = int) or now.day
-    week_start_day = request.args.get('wk_start_day', type = int) or 1
+    wk_start_day = request.args.get('wk_start_day', type = int)
 
     if month == 12:
         nextmonth = 1
@@ -113,11 +118,11 @@ def start():
     monthname = datetime(year, month, 1).strftime("%B")
     numweekday = datetime(year, month, 1).weekday()
 
-    if week_start_day == 0:
+    if wk_start_day == 0:
         placeholders = list(range(0, numweekday))
         week = week_monstart
-    elif week_start_day == 1:
-        placeholders = list(range(0, numweekday + 1))
+    else:
+        placeholders = list(range(0, (numweekday + 1) % 7))
         week = week_sunstart
 
     selected_day_datetime = datetime(year, month, selected_day, 0, 0)
@@ -144,14 +149,11 @@ def start():
     prevmonth = prevmonth,
     nextyear = nextyear,
     prevyear = prevyear,
-    event_list = event_list)
+    event_list = event_list,
+    wk_start_day = wk_start_day)
 
 @app.route("/add", methods=["GET","POST"])
 def start_add():
-    year = request.args.get('year', type = int) or 2021
-    month = request.args.get('month', type = int) or 12
-    selected_day = request.args.get('day', type = int) or 1
-
     if request.method == "POST":
         d = request.form.to_dict()
         if d["event_type"] == "static_day":
@@ -160,9 +162,5 @@ def start_add():
             add_varied_day_event(d["new_event_name"], d["new_event_month"], d["new_event_weekday"], d["new_event_weekdayofmonth"])
 
     return render_template('add-event-page.html')
-
-@app.route("/pref")
-def start_pref():
-    return render_template('preferences.html')
 
 # end render html funtions
