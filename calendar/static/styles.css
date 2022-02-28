@@ -48,11 +48,17 @@ a {
     text-decoration: none;
     }
 
-.preference-options {
+/* end menu css */
+
+/* start preference css */
+
+.preference_options {
     color: rgb(247, 248, 203);
     background-color: #241b3d;
+    display: none;
 }
-/* end menu css */
+
+/* end preference css */
 
 /* start form css */
 
