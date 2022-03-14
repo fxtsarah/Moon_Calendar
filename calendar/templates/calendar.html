@@ -27,7 +27,6 @@
 <script>
     $('#pref-toggle').click(
         () => {
-        //var preference_options = document.getElementById("preference_options");
         $(".preference_options").toggle(); 
         }
     )
@@ -87,24 +86,29 @@
 {% for date, phase, pos in dates %}
 {% if (date.day == selected_day) %}
     <a class="selectedday"
-    href="{{ url_for('start', year = year, month = month, wk_start_day = wk_start_day)}}">
-    <img src= "{{ pos | find_moon_image }}">
-    <span class="daytxt">{{ date.strftime('%d') }}</span></a>
+        href="{{ url_for('start', year = year, month = month, wk_start_day = wk_start_day)}}">
+        <img src= "{{ pos | find_moon_image }}">
+        <span class="daytxt">{{ date.strftime('%d') }}</span>
+    </a>
 {% else %}
-    <a class="day"
-    href="{{ url_for('start', year = year, month = month, day = date.day, wk_start_day = wk_start_day)}}">
-    <img src= "{{ pos | find_moon_image }}">
-    <span class="daytxt">{{ date.strftime('%d') }}</span></a>
+    <a id = "{{ date.strftime('%d') }}" class="day"
+        href="{{ url_for('start', year = year, month = month, day = date.day, wk_start_day = wk_start_day)}}">
+        <img src= "{{ pos | find_moon_image }}">
+        <span class="daytxt">{{ date.strftime('%d') }}</span>
+    </a>
 {% endif %}
 {% endfor %}
 
 <script>
-    // is there a way to change the given say without having the enitre page reload?
-    $('#day').click(
-        () => {
-        day = date.day;
-        }
-    )
+    // var curDay = "{{ selected_day }}";
+    // console.log(curDay);
+    // $('.day').click(
+    //     () => {
+    //     var id = $(this).attr('id');
+    //     day = parseInt(id);
+    //     console.log(id);
+    //     }
+    // )
 </script>
 
 {% endblock %}
