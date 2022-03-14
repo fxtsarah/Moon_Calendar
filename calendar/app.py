@@ -5,9 +5,12 @@ from math import ceil
 import calendar, math, decimal
 import sqlite3
 import numpy
-# how can I import skyfield so I can find solsitces and equinoxes?
-# import skyfield
-# from skyfield import api
+import skyfield
+from skyfield import api
+from skyfield import almanac
+
+ts = api.load.timescale()
+eph = api.load('de421.bsp')
 
 dec = decimal.Decimal
 
@@ -44,6 +47,9 @@ def mod_query(query_text, *args):
 def get_all_events():
     return query("SELECT * FROM events")
 
+def get_all_seasons():
+    return query("SELECT * FROM seasons")
+
 def get_static_day_events(mon, day):
     return query("SELECT NAME FROM events where month = " + str(mon) + " and day = " + str(day))
 
@@ -54,10 +60,14 @@ def get_varied_day_events(mon, day, year):
     + " and weekday = " + str(cur_numweekday) 
     + " and weekdayofmonth = " + str(cur_weekday_of_mon))
 
+def get_day_seasons(mon, day, year):
+    return query("SELECT NAME FROM seasons where year = " + str(year) + " and month = " + str(mon) + " and day = " + str(day))
+
 def get_day_events(mon, day, year):
     static_days = get_static_day_events(mon, day)
     varied_days = get_varied_day_events(mon, day, year)
-    return static_days + varied_days
+    seasons = get_day_seasons(mon, day, year)
+    return static_days + varied_days + seasons
 
 def add_static_event(name, mon, day):
     return mod_query("INSERT INTO events (name, month, day) VALUES (?,?,?)", name, mon, day)
@@ -160,7 +170,7 @@ def start_add():
             add_static_event(d["new_event_name"], d["new_event_month"], d["new_event_day"])
         elif d["event_type"] == "varied_day":
             add_varied_day_event(d["new_event_name"], d["new_event_month"], d["new_event_weekday"], d["new_event_weekdayofmonth"])
-
     return render_template('add-event-page.html')
 
 # end render html funtions
+
