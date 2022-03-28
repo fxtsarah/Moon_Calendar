@@ -24,16 +24,17 @@
     </div>
 
 <script>
- $(document).ready(function() {
-    $('input[type=radio][name="event_type"][value="static_day"]').change(function() {
-        $(".varied_day_choices").hide(); 
-        $(".static_choices").show(); 
-        $(".submit_event").show(); 
-    });
-    $('input[type=radio][name="event_type"][value="varied_day"]').change(function() {
-        $(".varied_day_choices").show(); 
-        $(".static_choices").hide(); 
-        $(".submit_event").show(); 
+    $(document).ready(function() {
+
+        $('input[type=radio][name="event_type"][value="static_day"]').change(function() {
+            $(".varied_day_choices").hide(); 
+            $(".static_choices").show(); 
+            $(".submit_event").show(); 
+        }); 
+        $('input[type=radio][name="event_type"][value="varied_day"]').change(function() {
+            $(".varied_day_choices").show(); 
+            $(".static_choices").hide(); 
+            $(".submit_event").show(); 
     });
 }); 
 </script>

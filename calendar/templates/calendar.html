@@ -24,18 +24,9 @@
     </form>
 </div>
 
-<script>
-    $('#pref-toggle').click(
-        () => {
-        $(".preference_options").toggle(); 
-        }
-    )
-</script>
-
 {% endblock %}
 
 {% block container %}
-
 
 <form> 
     <select name="month"> 
@@ -60,10 +51,10 @@
 
 <div class="day_info">
     <p class= "day_info_date"> {{ monthname }} {{ selected_day}}, {{ year }} </p>
-    <p> <b>Moon Phase: </b>
+    <p id="moonphase_info"> <b>Moon Phase: </b>
     {{ selected_phase }} </p>
    
-    <p>{% if event_list %}
+    <p id="event_info">{% if event_list %}
     <b>Events: </b>
    
     {% for event in event_list %}
@@ -84,31 +75,61 @@
 {% endfor %}
 
 {% for date, phase, pos in dates %}
+
+
 {% if (date.day == selected_day) %}
-    <a class="selectedday"
-        href="{{ url_for('start', year = year, month = month, wk_start_day = wk_start_day)}}">
+     <a class="selectedday">
         <img src= "{{ pos | find_moon_image }}">
         <span class="daytxt">{{ date.strftime('%d') }}</span>
     </a>
 {% else %}
-    <a id = "{{ date.strftime('%d') }}" class="day"
-        href="{{ url_for('start', year = year, month = month, day = date.day, wk_start_day = wk_start_day)}}">
-        <img src= "{{ pos | find_moon_image }}">
+    <a id = "{{ date.strftime('%d') }}" class="day"> 
+        <img src= "{{ pos | find_moon_image }}" onclick='clickDayAjax("{{ date }}")'>
         <span class="daytxt">{{ date.strftime('%d') }}</span>
     </a>
 {% endif %}
 {% endfor %}
 
 <script>
-    // var curDay = "{{ selected_day }}";
-    // console.log(curDay);
-    // $('.day').click(
-    //     () => {
-    //     var id = $(this).attr('id');
-    //     day = parseInt(id);
-    //     console.log(id);
+    // var selected_year;
+    // var selected_month;
+    // var selected_day = "{{ day }}";
+
+    // function changeDay(new_day) {  
+    //     var prev_day_element = document.getElementById(selected_day);
+    //     if (prev_day_element != null) {
+    //         prev_day_element.className = "day";
     //     }
-    // )
+
+    //     selected_day = new_day;
+    //     var new_day_element = document.getElementById(selected_day);
+    //     new_day_element.className = "selectedday";
+    // }
+
+    // function clickDay(date) {
+    //     var new_day = date.substring(8, 10);
+    //     changeDay(new_day);
+    // }
+
+    function clickDayAjax(date){
+        //var new_day = $(this).attr(id);
+        var new_day = date.substring(8,10);
+        alert(new_day);
+        $.ajax({
+            url: "/?month=" + "{{ month }}" + "&day=" + new_day + "&year=" + "{{ year }}" + "&wk_start_day=" + "{{ wk_start_day }}"
+            // /?month=1&day=2&year=2001
+            //url: "{{ url_for('start', year = year, month = month, day = new_day, wk_start_day = wk_start_day)}}"
+        }).done(function() {
+            alert("done");
+        })
+    }
+
+    $('#pref-toggle').click(
+        () => {
+        $(".preference_options").toggle(); 
+        }
+    )
+
 </script>
 
 {% endblock %}
