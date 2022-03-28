@@ -4,13 +4,6 @@ from moonphase import position, phase
 from math import ceil
 import calendar, math, decimal
 import sqlite3
-import numpy
-import skyfield
-from skyfield import api
-from skyfield import almanac
-
-ts = api.load.timescale()
-eph = api.load('de421.bsp')
 
 dec = decimal.Decimal
 
