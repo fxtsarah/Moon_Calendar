@@ -136,6 +136,7 @@ select {
     border: 2px solid white;
     vertical-align: top;
     color: white;
+    font-size: 24px;
     text-decoration: none;
     }
 
@@ -147,7 +148,7 @@ select {
     border: 2px solid rgb(255, 253, 128);
     vertical-align: top;
     color: rgb(253, 255, 155);
-    font-size: 16px;
+    font-size: 24px;
     text-decoration: none;
     }
 
