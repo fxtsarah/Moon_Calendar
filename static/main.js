@@ -2,6 +2,7 @@ const week_sunstart = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "
 const week_monstart = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 // testing git 
+// new branch addition
 function calendarPage(month, year, day) {
     var fullDate = (
         new Date(year, month, day)
