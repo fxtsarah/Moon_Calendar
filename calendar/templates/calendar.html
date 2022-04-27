@@ -1,0 +1,120 @@
+<html>
+
+<head>
+
+    <link rel="stylesheet"  href="static/styles.css"> 
+
+    <script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous">
+    </script>
+
+    <script src = "{{ url_for('static', filename='main.js')}}">
+
+
+</script>
+
+</head>
+
+
+<!-- {% extends "main.html" %}
+
+{% block nav %} -->
+
+<body onload="calendarPage('{{ month }}', '{{ year }}', '{{ selected_day }}')">
+
+<div>
+
+
+
+<!-- <div id = "preference_options" class = "preference_options">
+    <form style = "display: block;"> 
+        <b style = "display: block;"><p>First Day of the Week:</p></b>
+        <div>
+            <input type="radio" id="sun_start_radio" name="wk_start_day" value=1>
+            <label for="sun_start_radio">Sunday</label> <br>
+              
+            <input type="radio" id="mon_start_radio" name="wk_start_day" value=0>
+            <label for="mon_start_radio">Monday</label>
+        </div>
+        <input class= "submit_wk_start" type="submit" value="Apply">
+    </form>
+</div> -->
+</div>
+<!-- {% endblock %}
+
+{% block container %} -->
+
+<div class="container" id="main_container">
+
+<!-- <form> 
+    <select name="month"> 
+        <option value = 1>January</option>
+        <option value = 2>February</option>
+        <option value = 3>March</option>
+        <option value = 4>April</option>
+        <option value = 5>May</option>
+        <option value = 6>June</option>
+        <option value = 7>July</option>
+        <option value = 8>August</option>
+        <option value = 9>September</option>
+        <option value = 10>October</option>
+        <option value = 11>November</option>
+        <option value = 12>December</option>
+    </select>
+    <input type="text" name="day" placeholder="day">
+    <input type="text" name="year" placeholder="year">
+<input class= "submit-button" type="submit" value="Go To Date">
+</form>
+
+
+<div class="day_info">
+    <p class= "day_info_date"> {{ monthname }} {{ selected_day}}, {{ year }} </p>
+    <p id="moonphase_info"> <b>Moon Phase: </b>
+    {{ selected_phase }} </p>
+   
+    <p id="event_info">{% if event_list %}
+    <b>Events: </b>
+   
+    {% for event in event_list %}
+    {{ event["Name"] }} <br>
+    {% endfor %}</p>
+    
+    {% endif %}
+</div>
+
+{% for day in week %}
+    <div class="weekday">
+        <div class="weekdaytxt">{{ day }}</div>
+    </div>
+{% endfor %}
+
+{% for placeholder in placeholders %}
+    <a class="day"></a>
+{% endfor %}
+
+{% for date, phase, pos in dates %}
+
+
+{% if (date.day == selected_day) %}
+     <a class="selectedday">
+        <img src= "{{ pos | find_moon_image }}">
+        <span class="daytxt">{{ date.strftime('%d') }}</span>
+    </a>
+{% else %}
+    <a id = "{{ date.strftime('%d') }}" class="day"> 
+        <img src= "{{ pos | find_moon_image }}" onclick='clickDayAjax("{{ date }}")'>
+        <span class="daytxt">{{ date.strftime('%d') }}</span>
+    </a>
+{% endif %}
+{% endfor %} -->
+
+
+</div>
+
+<!-- {% endblock %} -->
+
+</body>
+
+</html>
