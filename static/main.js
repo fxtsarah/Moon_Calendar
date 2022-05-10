@@ -73,8 +73,11 @@ function calendarPage(month, year, day) {
         $(".preference_options").toggle(); 
         }
     )
+    
+    $('#main_container').append(`<div id='day_info'></div>`);
+    reloadDayInfo(month, year, day);
 
-    $('#main_container').append(`<form> 
+    $('#main_container').append(`<form method='POST'> 
         <select name="month"> 
             <option value = 1>January</option>
             <option value = 2>February</option>
@@ -94,9 +97,9 @@ function calendarPage(month, year, day) {
         <input class= "submit-button" type="submit" value="Go To Date">
     </form>`)
     
-    $('#main_container').append(`<div id='day_info'></div>`);
+
     
-    reloadDayInfo(month, year, day);
+
 
  
 
@@ -193,8 +196,9 @@ function calendarPage(month, year, day) {
 function changeDay(month, year, new_day) {  
     var prev_day_element = document.getElementById(selected_day);
     var new_day_element = document.getElementById(new_day);
-    new_day_element.className = "selectedday";
     prev_day_element.className = "day";
+    new_day_element.className = "selectedday";
+
   
     selected_day = new_day;
     reloadDayInfo(month, year, new_day)

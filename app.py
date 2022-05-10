@@ -93,17 +93,25 @@ now = datetime.now()
 # end calendar calculation functions
 # start render html funtions
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def start():
-    # year = request.args.get('year', type = int) or now.year
-    # month = request.args.get('month', type = int) or now.month
-    # selected_day = request.args.get('day', type = int) or now.day
     wk_start_day = request.args.get('wk_start_day', type = int)
 
     year = now.year
     month = now.month
     selected_day = now.day
 
+
+
+    if request.method == "POST":
+        d = request.form.to_dict()
+        year = int(d["year"])
+        month = int(d["month"])
+        selected_day = int(d["day"])
+
+    print(type(year))
+    print(type(month))
+    print(type(selected_day))
 
     if month == 12:
         nextmonth = 1
