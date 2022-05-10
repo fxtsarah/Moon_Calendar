@@ -193,5 +193,5 @@ def day_events_api(month, day, year):
 
 # end render html funtions
 
-print(day_events_api(1,1,2001))
+
 

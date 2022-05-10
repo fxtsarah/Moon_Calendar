@@ -1,11 +1,10 @@
 const week_sunstart = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 const week_monstart = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
-// testing git 
-// new branch addition
+var selected_day;
 function calendarPage(month, year, day) {
+    selected_day = day;
     var fullDate = (
-        new Date(year, month, day)
+        new Date(year, month - 1, selected_day)
     )
     var firstDayInMonthIndex = (
         new Date(year, month - 1).getDay()
@@ -14,21 +13,23 @@ function calendarPage(month, year, day) {
         new Date(year, month, 0).getDate()
     )
 
+
+
     var nextmonth;
     var prevmonth;
     var nextyear;
     var prevyear;
 
-    if (month == 11) {
+    if (month == 12) {
     nextmonth = 1;
     prevmonth = 11;
     nextyear = year + 1;
     prevyear = year;
     }
 
-    else if (month == 0) {
-    nextmonth = 1;
-    prevmonth = 10;
+    else if (month == 1) {
+    nextmonth = 2;
+    prevmonth = 12;
     nextyear = year;
     prevyear = year - 1;
     }
@@ -46,9 +47,9 @@ function calendarPage(month, year, day) {
 
 
     $('#main_container').append(`<div class = menu>
-        <div class=menuitem onclick ='calendarPage(${prevmonth}, ${prevyear}, ${day})' ><a>previous</a></div>
+        <div class=menuitem onclick ='calendarPage(${prevmonth}, ${prevyear}, ${selected_day})' ><a>previous</a></div>
         <div class=menuitem><h1>${fullDate.toLocaleString('default', {month: 'long'})}, ${year}</h1></div>
-        <div class=menuitem onclick ='calendarPage(${nextmonth}, ${nextyear}, ${day})' ><a>next</a></div>
+        <div class=menuitem onclick ='calendarPage(${nextmonth}, ${nextyear}, ${selected_day})' ><a>next</a></div>
         <div class=menuitem style = "float: right; margin-top: 30px;"><a>Add New Event</a></div>
         <div id = "pref-toggle" class = menuitem style = "float: right; margin-top: 30px;"><a>Preferences</a></div>
     </div>`)
@@ -95,18 +96,9 @@ function calendarPage(month, year, day) {
     
     $('#main_container').append(`<div id='day_info'></div>`);
     
+    reloadDayInfo(month, year, day);
 
-    $.ajax({
-        url: `/api/day_events/${parseInt(month) + 1}/${day}/${year}`
-    }).done(function(data) {
-        events = data["key"];
-
-        events.forEach(element => {
-            $('#day_info').append(`<p>${element["Name"]}</p>`);
-        });
-
-        console.log(events);
-    });
+ 
 
     week_sunstart.forEach((weekday_name) => {
         $('#main_container').append(`<div class="weekday">
@@ -120,29 +112,38 @@ function calendarPage(month, year, day) {
 
 
 
+
+
     var moon_img;
 
-    for (let i = 1; i < lastDayInMonth + 1; i += 1){
 
+
+    for (let i = 1; i < lastDayInMonth + 1; i += 1) {
+        //var monthStartOne = parseInt(month) + 1;
         $.ajax({
+            
             url: `/api/moon_img/${month}/${i}/${year}`
 
         }).done(function(data) {
+            console.log(month);
             moon_img = data;
-            if(i == day){
-                $('#main_container').append(`<div class="selectedday" onclick ='calendarPage(${month}, ${year}, ${i})'> 
+            if(i == selected_day){
+                $('#main_container').append(`<div class="selectedday" onclick ='changeDay(${month}, ${year}, ${i})'> 
                                                 <img src= "${moon_img}"> 
                                                 <span id = "${i}">${i}</span>
                                             </div>`);
            } else {
-           $('#main_container').append(`<div class="day" onclick ='calendarPage(${month}, ${year}, ${i})'> 
+           $('#main_container').append(`<div class="day" onclick ='changeDay(${month}, ${year}, ${i})'> 
                                             <img src= "${moon_img}"> 
                                             <span id = "${i}" >${i}</span>
                                         </div>`);
            }
         })
-
     }
+
+
+
+
 
 
 
@@ -162,25 +163,9 @@ function calendarPage(month, year, day) {
         // day = datetime(year, month, i, 0, 0)
         // dates.append((day, phase(position(day)), (position(day))))
 
-    }
-    
-    
-    
-    
-    
     
 
 
-
-    // var selected_year;
-    // var selected_month;
-    // var selected_day = "{{ day }}";
-
-    // function changeDay(new_day) {  
-    //     var prev_day_element = document.getElementById(selected_day);
-    //     if (prev_day_element != null) {
-    //         prev_day_element.className = "day";
-    //     }
 
     //     selected_day = new_day;
     //     var new_day_element = document.getElementById(selected_day);
@@ -192,15 +177,37 @@ function calendarPage(month, year, day) {
     //     changeDay(new_day);
     // }
 
-    function clickDayAjax(date){
-        //var new_day = $(this).attr(id);
-        var new_day = date.substring(8,10);
-        alert(new_day);
-        $.ajax({
-            url: "/?month=" + "{{ month }}" + "&day=" + new_day + "&year=" + "{{ year }}" + "&wk_start_day=" + "{{ wk_start_day }}"
-            //url: "{{ url_for('start', year = year, month = month, day = new_day, wk_start_day = wk_start_day)}}"
-        }).done(function() {
-            alert("done");
-        })
-    }
+    // function clickDayAjax(date){
+    //     //var new_day = $(this).attr(id);
+    //     var new_day = date.substring(8,10);
+    //     alert(new_day);
+    //     $.ajax({
+    //         url: "/?month=" + "{{ month }}" + "&day=" + new_day + "&year=" + "{{ year }}" + "&wk_start_day=" + "{{ wk_start_day }}"
+    //         //url: "{{ url_for('start', year = year, month = month, day = new_day, wk_start_day = wk_start_day)}}"
+    //     }).done(function() {
+    //         alert("done");
+    //     })
+    //}
 
+}
+function changeDay(month, year, new_day) {  
+    var prev_day_element = document.getElementById(selected_day);
+    var new_day_element = document.getElementById(new_day);
+    new_day_element.className = "selectedday";
+    prev_day_element.className = "day";
+  
+    selected_day = new_day;
+    reloadDayInfo(month, year, new_day)
+}
+
+function reloadDayInfo(month, year, day) {
+    $('#day_info').html("");
+    $.ajax({
+        url: `/api/day_events/${parseInt(month)}/${day}/${year}`
+    }).done(function(data) {
+        events = data["key"];
+        events.forEach(element => {
+            $('#day_info').append(`<p>${element}</p>`);
+        });
+    });
+}
