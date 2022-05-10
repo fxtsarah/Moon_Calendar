@@ -1,18 +1,28 @@
 const week_sunstart = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 const week_monstart = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 var selected_day;
-function calendarPage(month, year, day) {
+function calendarPage(month, year, day, wk_start_day) {
     selected_day = day;
     var fullDate = (
         new Date(year, month - 1, selected_day)
     )
-    var firstDayInMonthIndex = (
-        new Date(year, month - 1).getDay()
-    )
+    var firstDayInMonthIndex 
     var lastDayInMonth = (
         new Date(year, month, 0).getDate()
     )
 
+    if (wk_start_day == 0) {
+        weekList = week_monstart
+        firstDayInMonthIndex = (
+            (new Date(year, month - 1).getDay() + 6) % 7
+        )
+    }
+    else {
+        weekList = week_sunstart 
+        firstDayInMonthIndex = (
+            new Date(year, month - 1).getDay() % 7
+        )
+    }
 
 
     var nextmonth;
@@ -47,16 +57,19 @@ function calendarPage(month, year, day) {
 
 
     $('#main_container').append(`<div class = menu>
-        <div class=menuitem onclick ='calendarPage(${prevmonth}, ${prevyear}, ${selected_day})' ><a>previous</a></div>
+        <div class=menuitem onclick ='calendarPage(${prevmonth}, ${prevyear}, ${selected_day}, ${wk_start_day})' ><a>previous</a></div>
         <div class=menuitem><h1>${fullDate.toLocaleString('default', {month: 'long'})}, ${year}</h1></div>
-        <div class=menuitem onclick ='calendarPage(${nextmonth}, ${nextyear}, ${selected_day})' ><a>next</a></div>
+        <div class=menuitem onclick ='calendarPage(${nextmonth}, ${nextyear}, ${selected_day}, ${wk_start_day})' ><a>next</a></div>
         <div class=menuitem style = "float: right; margin-top: 30px;"><a>Add New Event</a></div>
         <div id = "pref-toggle" class = menuitem style = "float: right; margin-top: 30px;"><a>Preferences</a></div>
     </div>`)
 
     $('#main_container').append(`<div id = "preference_options" class = "preference_options">
-            <form style = "display: block;"> 
+            <form method='POST' style = "display: block;"> 
                 <b style = "display: block;"><p>First Day of the Week:</p></b>
+                <input type="hidden" name="day" value=${selected_day}>
+                <input type="hidden" name="month" value=${month}>
+                <input type="hidden" name="year" value=${year}>
                 <div>
                     <input type="radio" id="sun_start_radio" name="wk_start_day" value=1>
                     <label for="sun_start_radio">Sunday</label> <br>
@@ -73,7 +86,7 @@ function calendarPage(month, year, day) {
         $(".preference_options").toggle(); 
         }
     )
-    
+
     $('#main_container').append(`<div id='day_info'></div>`);
     reloadDayInfo(month, year, day);
 
@@ -94,6 +107,7 @@ function calendarPage(month, year, day) {
         </select>
         <input type="text" name="day" placeholder="day">
         <input type="text" name="year" placeholder="year">
+        <input type="hidden" name="wk_start_day" value=${wk_start_day}>
         <input class= "submit-button" type="submit" value="Go To Date">
     </form>`)
     
@@ -103,11 +117,12 @@ function calendarPage(month, year, day) {
 
  
 
-    week_sunstart.forEach((weekday_name) => {
+    weekList.forEach((weekday_name) => {
         $('#main_container').append(`<div class="weekday">
             <div class="weekdaytxt">${weekday_name}</div>
             </div>`);
     });
+
 
     for (let i = 0; i < firstDayInMonthIndex; i += 1){
         $('#main_container').append(`<a class="day"></a>`);
@@ -122,13 +137,13 @@ function calendarPage(month, year, day) {
 
 
     for (let i = 1; i < lastDayInMonth + 1; i += 1) {
-        //var monthStartOne = parseInt(month) + 1;
+        // This call does not always finish running exactly when I want it to, causing
+        // some of the days to be in the wrong order
         $.ajax({
-            
+
             url: `/api/moon_img/${month}/${i}/${year}`
 
         }).done(function(data) {
-            console.log(month);
             moon_img = data;
             if(i == selected_day){
                 $('#main_container').append(`<div class="selectedday" onclick ='changeDay(${month}, ${year}, ${i})'> 

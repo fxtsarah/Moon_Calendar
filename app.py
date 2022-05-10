@@ -93,62 +93,59 @@ now = datetime.now()
 # end calendar calculation functions
 # start render html funtions
 
+
 @app.route("/", methods=["GET", "POST"])
 def start():
-    wk_start_day = request.args.get('wk_start_day', type = int)
+    wk_start_day = 1
 
     year = now.year
     month = now.month
     selected_day = now.day
-
-
 
     if request.method == "POST":
         d = request.form.to_dict()
         year = int(d["year"])
         month = int(d["month"])
         selected_day = int(d["day"])
+        wk_start_day = int(d["wk_start_day"])
 
-    print(type(year))
-    print(type(month))
-    print(type(selected_day))
 
-    if month == 12:
-        nextmonth = 1
-        prevmonth = 11
-        nextyear = year + 1
-        prevyear = year
+
+    # if month == 12:
+    #     nextmonth = 1
+    #     prevmonth = 11
+    #     nextyear = year + 1
+    #     prevyear = year
     
-    elif month == 1:
-        nextmonth = 2
-        prevmonth = 12
-        nextyear = year
-        prevyear = year - 1
+    # elif month == 1:
+    #     nextmonth = 2
+    #     prevmonth = 12
+    #     nextyear = year
+    #     prevyear = year - 1
         
-    else:
-        nextmonth = month + 1
-        prevmonth = month - 1
-        nextyear = year
-        prevyear = year
+    # else:
+    #     nextmonth = month + 1
+    #     prevmonth = month - 1
+    #     nextyear = year
+    #     prevyear = year
     
     week_sunstart = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     week_monstart = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    monthname = datetime(year, month, 1).strftime("%B")
+    # monthname = datetime(year, month, 1).strftime("%B")
     numweekday = datetime(year, month, 1).weekday()
 
     if wk_start_day == 0:
         placeholders = list(range(0, numweekday))
-        week = week_monstart
     else:
         placeholders = list(range(0, (numweekday + 1) % 7))
-        week = week_sunstart
+  
 
-    selected_day_datetime = datetime(year, month, selected_day, 0, 0)
+    #selected_day_datetime = datetime(year, month, selected_day, 0, 0)
 
     dates = []
     lastofmonth = calendar.monthrange(year, month)[1]
 
-    event_list = get_day_events(month, selected_day, year)
+    #event_list = get_day_events(month, selected_day, year)
 
     for i in range(1, (lastofmonth + 1)):
         day = datetime(year, month, i, 0, 0)
@@ -160,16 +157,16 @@ def start():
     # selected_phase = phase(position(selected_day_datetime)),
     # monthname = monthname, 
      month = month,
-     year = year )
-    # dates = dates, 
+     year = year,
+     dates = dates, 
     # week = week, 
-    # placeholders = placeholders,
+    # placeholders = placeholders)
     # nextmonth = nextmonth,
     # prevmonth = prevmonth,
     # nextyear = nextyear,
     # prevyear = prevyear,
     # event_list = event_list,
-    # wk_start_day = wk_start_day)
+     wk_start_day = wk_start_day)
 
 @app.route("/add", methods=["GET","POST"])
 def start_add():
