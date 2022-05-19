@@ -103,11 +103,18 @@ def start():
     selected_day = now.day
 
     if request.method == "POST":
+        
         d = request.form.to_dict()
-        year = int(d["year"])
-        month = int(d["month"])
-        selected_day = int(d["day"])
-        wk_start_day = int(d["wk_start_day"])
+        if len(d) != 4:
+                    if d["event_type"] == "static_day":
+                        add_static_event(d["new_event_name"], d["new_event_month"], d["new_event_day"])
+                    elif d["event_type"] == "varied_day":
+                        add_varied_day_event(d["new_event_name"], d["new_event_month"], d["new_event_weekday"], d["new_event_weekdayofmonth"])
+        else:
+            year = int(d["year"])
+            month = int(d["month"])
+            selected_day = int(d["day"])
+            wk_start_day = int(d["wk_start_day"])
 
 
 
@@ -195,6 +202,15 @@ def day_events_api(month, day, year):
     }
 
     return returnDict
+
+@app.route('/api/moon_imgs_month/<int:month>/<int:year>/<int:lastOfMonth>') 
+def moon_imgs_month_api(month, year, lastOfMonth):
+    moon_images = {}
+    for i in range (1, lastOfMonth + 1):
+        moon_images[i] = moon_img_api(month, i, year)
+    return moon_images
+
+    
 
 # end render html funtions
 

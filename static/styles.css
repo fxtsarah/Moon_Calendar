@@ -60,6 +60,12 @@ a {
 
 /* end preference css */
 
+.add_event_options {
+    color: rgb(247, 248, 203);
+    background-color: #241b3d;
+    display: none;
+}
+
 /* start form css */
 
 form {

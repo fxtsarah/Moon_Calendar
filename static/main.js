@@ -54,13 +54,11 @@ function calendarPage(month, year, day, wk_start_day) {
 
     $('#main_container').html("");
 
-
-
     $('#main_container').append(`<div class = menu>
         <div class=menuitem onclick ='calendarPage(${prevmonth}, ${prevyear}, ${selected_day}, ${wk_start_day})' ><a>previous</a></div>
         <div class=menuitem><h1>${fullDate.toLocaleString('default', {month: 'long'})}, ${year}</h1></div>
         <div class=menuitem onclick ='calendarPage(${nextmonth}, ${nextyear}, ${selected_day}, ${wk_start_day})' ><a>next</a></div>
-        <div class=menuitem style = "float: right; margin-top: 30px;"><a>Add New Event</a></div>
+        <div id = "add-toggle" class=menuitem style = "float: right; margin-top: 30px;"><a>Add New Event</a></div>
         <div id = "pref-toggle" class = menuitem style = "float: right; margin-top: 30px;"><a>Preferences</a></div>
     </div>`)
 
@@ -87,6 +85,15 @@ function calendarPage(month, year, day, wk_start_day) {
         }
     )
 
+    $('#main_container').append(`<div id='add_event'></div>`);
+    reloadAddEvent();
+
+    $('#add-toggle').click(
+        () => {
+        $(".add_event_options").toggle(); 
+        }
+    )
+
     $('#main_container').append(`<div id='day_info'></div>`);
     reloadDayInfo(month, year, day);
 
@@ -110,10 +117,6 @@ function calendarPage(month, year, day, wk_start_day) {
         <input type="hidden" name="wk_start_day" value=${wk_start_day}>
         <input class= "submit-button" type="submit" value="Go To Date">
     </form>`)
-    
-
-    
-
 
  
 
@@ -132,32 +135,35 @@ function calendarPage(month, year, day, wk_start_day) {
 
 
 
+    var moon_images;
     var moon_img;
 
+    $.ajax({
 
-
-    for (let i = 1; i < lastDayInMonth + 1; i += 1) {
-        // This call does not always finish running exactly when I want it to, causing
-        // some of the days to be in the wrong order
-        $.ajax({
-
-            url: `/api/moon_img/${month}/${i}/${year}`
+        url: `/api/moon_imgs_month/${month}/${year}/${lastDayInMonth}`
 
         }).done(function(data) {
-            moon_img = data;
-            if(i == selected_day){
-                $('#main_container').append(`<div class="selectedday" onclick ='changeDay(${month}, ${year}, ${i})'> 
+            moon_images = data;
+            for (let i = 1; i < lastDayInMonth + 1; i += 1) {
+ 
+                moon_img = moon_images[i];
+                if(i == selected_day){
+                    $('#main_container').append(`<div id = "${i}_div" class="selectedday" onclick ='changeDay(${month}, ${year}, ${i})'> 
+                                                    <img src= "${moon_img}"> 
+                                                    <span id = "${i}">${i}</span>
+                                                </div>`);
+               } else {
+               $('#main_container').append(`<div id = "${i}_div" class="day" onclick ='changeDay(${month}, ${year}, ${i})'> 
                                                 <img src= "${moon_img}"> 
-                                                <span id = "${i}">${i}</span>
+                                                <span id = "${i}" >${i}</span>
                                             </div>`);
-           } else {
-           $('#main_container').append(`<div class="day" onclick ='changeDay(${month}, ${year}, ${i})'> 
-                                            <img src= "${moon_img}"> 
-                                            <span id = "${i}" >${i}</span>
-                                        </div>`);
-           }
-        })
-    }
+               }
+    
+        }
+    })
+
+
+
 
 
 
@@ -211,8 +217,13 @@ function calendarPage(month, year, day, wk_start_day) {
 function changeDay(month, year, new_day) {  
     var prev_day_element = document.getElementById(selected_day);
     var new_day_element = document.getElementById(new_day);
+    var prev_day_element_div = document.getElementById(selected_day + "_div");
+    var new_day_element_div = document.getElementById(new_day + "_div");
     prev_day_element.className = "day";
     new_day_element.className = "selectedday";
+    prev_day_element_div.className = "day";
+    new_day_element_div.className = "selectedday";
+
 
   
     selected_day = new_day;
@@ -230,3 +241,93 @@ function reloadDayInfo(month, year, day) {
         });
     });
 }
+
+function reloadAddEvent() {
+    $('#add_event').html("");
+    $('#add_event').append(`<div class = "add_event_options" style = "display: inline-flex;">
+<form method = "POST" style = "display: block;"> 
+    <div style = "display: block;">
+        <input type="text" name="new_event_name" placeholder="Event Name" class="name_input">
+    </div>
+
+    <b style = "display: block;"><p>Please select how the date of your event will be calculated:</p></b>
+    <div>
+        <input type="radio" id="static_radio" name="event_type" value="static_day">
+        <label for="static_radio">By Month and Day (E.g. January 1st)</label> <br>
+      
+        <input type="radio" id="varied_radio" name="event_type" value="varied_day">
+        <label for="varied_radio">By Weekday and Month (E.g. 3rd Thursday of November)</label>
+    </div>
+
+    <div class = "static_choices">
+        <select name="new_event_month"> 
+            <option value = 1>January</option>
+            <option value = 2>February</option>
+            <option value = 3>March</option>
+            <option value = 4>April</option>
+            <option value = 5>May</option>
+            <option value = 6>June</option>
+            <option value = 7>July</option>
+            <option value = 8>August</option>
+            <option value = 9>September</option>
+            <option value = 10>October</option>
+            <option value = 11>November</option>
+            <option value = 12>December</option>
+        </select>
+
+        <input type="text" name="new_event_day" placeholder="day">
+    </div>
+
+   <div class = "varied_day_choices">
+    <select name="new_event_weekdayofmonth"> 
+        <option value = 1>First</option>
+        <option value = 2>Second</option>
+        <option value = 3>Third</option>
+        <option value = 4>Fourth</option>
+        <option value = 5>Fifth</option>
+    </select>
+
+    <select name="new_event_weekday"> 
+        <option value = 0>Monday</option>
+        <option value = 1>Tuesday</option>
+        <option value = 2>Wednesday</option>
+        <option value = 3>Thursday</option>
+        <option value = 4>Friday</option>
+        <option value = 5>Saturday</option>
+        <option value = 6>Sunday</option>
+    </select>
+    <p style = "display: inline-flex; margin-inline-end: 5px; margin-inline-start: 5px;">of</p>
+    <select name="new_event_month"> 
+        <option value = 1>January</option>
+        <option value = 2>February</option>
+        <option value = 3>March</option>
+        <option value = 4>April</option>
+        <option value = 5>May</option>
+        <option value = 6>June</option>
+        <option value = 7>July</option>
+        <option value = 8>August</option>
+        <option value = 9>September</option>
+        <option value = 10>October</option>
+        <option value = 11>November</option>
+        <option value = 12>December</option>
+    </select>
+</div>
+<input class= "submit_event" type="submit" value="Add Event">
+</form>
+</div>`);
+
+}
+
+$(document).ready(function() {
+
+    $('input[type=radio][name="event_type"][value="static_day"]').change(function() {
+        $(".varied_day_choices").hide(); 
+        $(".static_choices").show(); 
+        $(".submit_event").show(); 
+    }); 
+    $('input[type=radio][name="event_type"][value="varied_day"]').change(function() {
+        $(".varied_day_choices").show(); 
+        $(".static_choices").hide(); 
+        $(".submit_event").show(); 
+});
+}); 
