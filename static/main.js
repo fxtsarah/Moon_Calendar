@@ -86,7 +86,6 @@ function calendarPage(month, year, day, wk_start_day) {
     )
 
     $('#main_container').append(`<div id='add_event'></div>`);
-    //$('#add_event').html("");
     $('#add_event').append(`<div class = "add_event_options" style = "display: none;">
 <form method = "POST" style = "display: block;"> 
     <div style = "display: block;">

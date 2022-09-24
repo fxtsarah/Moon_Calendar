@@ -1,5 +1,3 @@
-import numpy
-import skyfield
 from skyfield import api
 from skyfield import almanac
 import sqlite3

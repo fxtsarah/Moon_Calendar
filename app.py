@@ -1,11 +1,9 @@
-from gettext import find
 from flask import Flask, render_template, url_for, request
 from datetime import datetime
 from moonphase import position, phase
 from math import ceil
 import calendar, math, decimal
 import sqlite3
-import json
 
 dec = decimal.Decimal
 
@@ -105,6 +103,7 @@ def start():
     if request.method == "POST":
         
         d = request.form.to_dict()
+        print(d)
         if len(d) != 4:
                     if d["event_type"] == "static_day":
                         add_static_event(d["new_event_name"], d["new_event_month"], d["new_event_day"])
@@ -183,7 +182,7 @@ def start_add():
             add_static_event(d["new_event_name"], d["new_event_month"], d["new_event_day"])
         elif d["event_type"] == "varied_day":
             add_varied_day_event(d["new_event_name"], d["new_event_month"], d["new_event_weekday"], d["new_event_weekdayofmonth"])
-    return render_template('add-event-page.html')
+    return render_template('add-event-page.html') #do we need???
 
 @app.route('/api/moon_img/<int:month>/<int:day>/<int:year>') 
 def moon_img_api(month, day, year):
