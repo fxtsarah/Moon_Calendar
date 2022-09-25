@@ -31,6 +31,7 @@ def mod_query(query_text, *args):
     conn.commit()
     conn.close()
 
+# generates the solstices and equinoxes from 1900 to 2052, then adds them to the database.
 def generateSeasons():
     t0 = ts.utc(1900, 1, 1)
     t1 = ts.utc(2052, 12, 31)

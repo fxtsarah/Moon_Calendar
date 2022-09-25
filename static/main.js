@@ -229,7 +229,6 @@ function calendarPage(month, year, day, wk_start_day) {
         $('#main_container').append(`<a class="day"></a>`);
     }
 
-
     var moon_images; // the list of the images that correspond to the moon phase for each day of the month
     var moon_img; // the image that corresponds to the moon phase for the current day
 
@@ -262,11 +261,14 @@ function calendarPage(month, year, day, wk_start_day) {
     })
 
 
+    // shows the choices to add a static day event
     $('input[type=radio][name="event_type"][value="static_day"]').change(function() {
         $(".varied_day_choices").hide(); 
         $(".static_choices").show(); 
         $(".submit_event").show(); 
     }); 
+
+    // shows the choices to add a varied day event
     $('input[type=radio][name="event_type"][value="varied_day"]').change(function() {
         $(".varied_day_choices").show(); 
         $(".static_choices").hide(); 

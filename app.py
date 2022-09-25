@@ -113,37 +113,43 @@ now = datetime.now()
 
 @app.route("/", methods=["GET", "POST"])
 def start():
-    # for event in get_all_events():
-    #     print(json.dumps(event) + "\n")
+
     wk_start_day = 1
 
     year = now.year
     month = now.month
     selected_day = now.day
 
+    # handles post requests
     if request.method == "POST":
         
         d = request.form.to_dict()
-        print(d)
 
+        # handles reuqests to add a new event
         if len(d) != 4:
                     if d["event_type"] == "static_day":
                         add_static_event(d["new_event_name"], d["new_event_month"], d["new_event_day"])
                     elif d["event_type"] == "varied_day":
                         add_varied_day_event(d["new_event_name"], d["new_event_month_varied"], d["new_event_weekday"], d["new_event_weekdayofmonth"])            
+        
+        # handles requests to jump to a specific date or switch the first day of the week
         else:
             year = int(d["year"])
             month = int(d["month"])
             selected_day = int(d["day"])
             wk_start_day = int(d["wk_start_day"])
 
+    # lists of dates and their moon phases
     dates = []
+    # the last day of the month
     lastofmonth = calendar.monthrange(year, month)[1]
 
+    # contructs the list of dates and their moon phases
     for i in range(1, (lastofmonth + 1)):
         day = datetime(year, month, i, 0, 0)
         dates.append((day, phase(position(day)), (position(day))))
 
+    # renders the html
     return render_template('calendar.html', 
     selected_day = selected_day, 
     month = month,
@@ -151,12 +157,14 @@ def start():
     dates = dates, 
     wk_start_day = wk_start_day)
 
+# finds the moon image for a given month, day, and year
 @app.route('/api/moon_img/<int:month>/<int:day>/<int:year>') 
 def moon_img_api(month, day, year):
     pos = position(datetime(year, month, day))
     moon_image = find_moon_image(pos)
     return moon_image
 
+# finds the event that fall on a given day
 @app.route('/api/day_events/<int:month>/<int:day>/<int:year>') 
 def day_events_api(month, day, year):
     events = get_day_events(month, day, year)
@@ -168,6 +176,7 @@ def day_events_api(month, day, year):
     }
     return returnDict
 
+# gets a list of all the moon inages for a given month
 @app.route('/api/moon_imgs_month/<int:month>/<int:year>/<int:lastOfMonth>') 
 def moon_imgs_month_api(month, year, lastOfMonth):
     moon_images = {}
